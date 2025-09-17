@@ -25,7 +25,7 @@ def draw_debug_cell(Position, CellSize, CellPosition, Sudoku):
 		CellColor = (210 - Pattern, 210 - Pattern, 210 - Pattern)
 	pygame.draw.rect(Display.Display, CellColor, (Position[0], Position[1], CellSize, CellSize))
 	if Sudoku.Grid[CellPosition[1]][CellPosition[0]] != 0:
-		Available = Sudoku.check_cell_availability(CellPosition)
+		Available = Sudoku.GridAvailability[CellPosition[1]][CellPosition[0]]
 		Color = (180 * int(Sudoku.Grid[Sudoku.PlacePosition[1]][Sudoku.PlacePosition[0]] not in Available), 0, 0)
 		draw_text(str(Sudoku.Grid[CellPosition[1]][CellPosition[0]]), [Position[0] + int(CellSize / 2), Position[1] + int(CellSize / 2)], Font = Sudoku.Font, Color = Color)
 

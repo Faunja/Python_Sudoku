@@ -26,6 +26,7 @@ def update_key_down(Key):
 		Sudoku.update_cells(Controls.Numbers.index(Key))
 	if Key in Controls.RestartGame:
 		Sudoku.restart_grid()
+		Sudoku.create_grid()
 	
 	if Key in Controls.Fullscreen:
 		Display.toggle_fullscreen()
@@ -69,9 +70,9 @@ def check_pressed_key(Keybinds):
 
 def update_pressed_keys():
 	if check_pressed_key(Controls.RewindGrid):
-		Sudoku.rewind_grid()
+		Sudoku.undo_update_cells()
 	if check_pressed_key(Controls.ForwardGrid):
-		Sudoku.manual_grid()
+		Sudoku.redo_update_cells()
 	if check_pressed_key(Controls.MoveDown):
 		Sudoku.update_position([0, 1])
 	if check_pressed_key(Controls.MoveUp):
