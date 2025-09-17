@@ -27,6 +27,8 @@ def update_key_down(Key):
 	if Key in Controls.RestartGame:
 		Sudoku.restart_grid()
 		Sudoku.create_grid()
+	if Key in Controls.SolveSudoku:
+		Sudoku.solve_grid()
 	
 	if Key in Controls.Fullscreen:
 		Display.toggle_fullscreen()

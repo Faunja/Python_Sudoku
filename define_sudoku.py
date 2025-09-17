@@ -13,7 +13,7 @@ class define_sudoku:
 		self.SavedGrids = []
 		self.SavePosition = -1
 		
-		self.LockedGrid = copy.deepcopy(self.Grid)
+		self.LockedGrid = [[1 for X in range(9)] for Y in range(9)]
 		self.PlacePosition = [0, 0]
 		
 		self.update_cell_display()
@@ -110,7 +110,7 @@ class define_sudoku:
 		self.SavePosition += 1
 		self.Grid = copy.deepcopy(self.SavedGrids[self.SavePosition])
 	
-	def check_availability(self):
+	def check_availability(self, Position):
 		for Y in range(9):
 			for X in range(9):
 				AvailableNumbers = self.check_cell_availability([X, Y])
@@ -118,50 +118,64 @@ class define_sudoku:
 					self.Grid[Y][X] = AvailableNumbers[0]
 		RowAvailability = []
 		for X in range(9):
-			RowAvailability.append(self.check_cell_availability([X, self.PlacePosition[1]]))
-		for Number in RowAvailability[self.PlacePosition[0]]:
+			RowAvailability.append(self.check_cell_availability([X, Position[1]]))
+		for Number in RowAvailability[Position[0]]:
 			LastNumber = True
-			for X in range(3 + int(self.PlacePosition[0] / 3) * 3, 9):
+			for X in range(3 + int(Position[0] / 3) * 3, 9):
 				if Number in RowAvailability[X]:
 					LastNumber = False
 					break
 			if LastNumber:
-				self.Grid[self.PlacePosition[1]][self.PlacePosition[0]] = Number
+				self.Grid[Position[1]][Position[0]] = Number
 	
 	def restart_grid(self):
 		self.Grid = [[0 for X in range(9)] for Y in range(9)]
 		self.SavedGrids = []
 		self.SavePosition = -1
-		self.LockedGrid = copy.deepcopy(self.Grid)
-		self.PlacePosition = [0, 0]
+		self.LockedGrid = [[1 for X in range(9)] for Y in range(9)]
 
-	def lock_grid(self):
-		CellsLocked = 0
-		while CellsLocked < 36:
-			Position = [random.randint(0, 8), random.randint(0, 8)]
-			if self.LockedGrid[Position[1]][Position[0]] != 1:
-				self.LockedGrid[Position[1]][Position[0]] = 1
-				CellsLocked += 1
+	def solve_grid(self):
 		for Column in range(9):
 			for Row in range(9):
-				self.Grid[Column][Row] *= int(self.LockedGrid[Column][Row] != 0)
+				if self.LockedGrid[Column][Row]:
+					continue
+				Available = self.check_cell_availability([Row, Column])
+				if not len(Available):
+					continue
+				self.Grid[Column][Row] = random.choice(Available)
+				self.SavePosition += 1
+				self.SavedGrids.append(copy.deepcopy(self.Grid))
+
+	def lock_grid(self):
+		CellsRemoved = 0
+		SolvedGrid = copy.deepcopy(self.Grid)
+		while CellsRemoved < 9 * 9 - 36:
+			Position = [random.randint(0, 8), random.randint(0, 8)]
+			if self.LockedGrid[Position[1]][Position[0]]:
+				self.Grid[Position[1]][Position[0]] = 0
+				self.LockedGrid[Position[1]][Position[0]] = 0
+				CellsRemoved += 1
+				self.SavePosition += 1
+				self.SavedGrids.append(copy.deepcopy(self.Grid))
 
 	def create_grid(self):
-		while self.PlacePosition != [8, 8]:
-			self.check_availability()
-			if not self.Grid[self.PlacePosition[1]][self.PlacePosition[0]]:
-				AvailableCells = self.check_cell_availability(self.PlacePosition)
+		PlacePosition = [0, 0]
+		while PlacePosition != [8, 8]:
+			self.check_availability(PlacePosition)
+			if not self.Grid[PlacePosition[1]][PlacePosition[0]]:
+				AvailableCells = self.check_cell_availability(PlacePosition)
 				if not len(AvailableCells):
+					PlacePosition = [0, 0]
 					self.restart_grid()
 					continue
-				self.Grid[self.PlacePosition[1]][self.PlacePosition[0]] = random.choice(AvailableCells)
-			self.PlacePosition[0] += 1
-			if self.PlacePosition[0] == 9:
-				self.PlacePosition[0] = 0
-				self.PlacePosition[1] += 1
+				self.Grid[PlacePosition[1]][PlacePosition[0]] = random.choice(AvailableCells)
+			PlacePosition[0] += 1
+			if PlacePosition[0] == 9:
+				PlacePosition[0] = 0
+				PlacePosition[1] += 1
 		self.lock_grid()
-		self.SavePosition += 1
-		self.SavedGrids.append(copy.deepcopy(self.Grid))
+		self.SavePosition = 0
+		self.SavedGrids = [copy.deepcopy(self.Grid)]
 		self.update_grid_availability()
 
 Sudoku = define_sudoku()

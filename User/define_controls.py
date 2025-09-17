@@ -13,6 +13,8 @@ class Define_Controls:
 		self.RestartGame = [pygame.K_r]
 		self.Fullscreen = [pygame.K_F11]
 		
+		self.SolveSudoku = [pygame.K_q]
+		
 		self.PressedKeys = {}
 
 Controls = Define_Controls()
