@@ -3,6 +3,8 @@ import pygame
 class Define_Controls:
 	def __init__(self):
 		self.QuitGame = [pygame.K_ESCAPE]
+		self.RewindGrid = [pygame.K_f]
+		self.ForwardGrid = [pygame.K_j]
 		self.MoveDown = [pygame.K_DOWN, pygame.K_s]
 		self.MoveUp = [pygame.K_UP, pygame.K_w]
 		self.MoveLeft = [pygame.K_LEFT, pygame.K_a]

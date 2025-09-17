@@ -10,31 +10,53 @@ def draw_text(Text, Position, Orientation = [0, 0], Font = Display.Font, Color =
 	Display.Display.blit(Text, (Position[0] + Orientation[0], Position[1] + Orientation[1]))
 	return TextWidth, TextHeight
 
-def draw_cell(Position, CellSize, CellPosition, Sudoku):
+def draw_debug_cell(Position, CellSize, CellPosition, Sudoku):
 	Pattern = 15 * int(CellPosition[0] % 2 ^ CellPosition[1] % 2)
-	SquarePosition = [int(Sudoku.Position[0] / 3) * 3, int(Sudoku.Position[1] / 3) * 3]
-	if Sudoku.LockedGrid[CellPosition[1]][CellPosition[0]]:
-		CellColor = (120 - Pattern, 120 - Pattern, 120 - Pattern)
-	elif CellPosition == Sudoku.Position or Sudoku.Grid[Sudoku.Position[1]][Sudoku.Position[0]] == Sudoku.Grid[CellPosition[1]][CellPosition[0]] and Sudoku.Grid[Sudoku.Position[1]][Sudoku.Position[0]] != 0:
+	SquarePosition = [int(Sudoku.PlacePosition[0] / 3) * 3, int(Sudoku.PlacePosition[1] / 3) * 3]
+	if Sudoku.SavedGrids[len(Sudoku.SavedGrids) - 1][CellPosition[1]][CellPosition[0]] != Sudoku.Grid[CellPosition[1]][CellPosition[0]]:
+		CellColor = (120, 210, 120)
+	elif CellPosition == Sudoku.PlacePosition or Sudoku.Grid[CellPosition[1]][CellPosition[0]] not in Sudoku.Grid[Sudoku.PlacePosition[1]] and Sudoku.Grid[CellPosition[1]][CellPosition[0]] != 0:
 		CellColor = (120, 120, 210)
 	elif CellPosition[0] in [Cell for Cell in range(SquarePosition[0], SquarePosition[0] + 3)] and CellPosition[1] in [Cell for Cell in range(SquarePosition[1], SquarePosition[1] + 3)]:
 		CellColor = (180 - Pattern, 180 - Pattern, 210 - Pattern)
-	elif Sudoku.Position[0] == CellPosition[0] or Sudoku.Position[1] == CellPosition[1]:
+	elif Sudoku.PlacePosition[0] == CellPosition[0] or Sudoku.PlacePosition[1] == CellPosition[1]:
 		CellColor = (180 - Pattern, 180 - Pattern, 210 - Pattern)
 	else:
 		CellColor = (210 - Pattern, 210 - Pattern, 210 - Pattern)
 	pygame.draw.rect(Display.Display, CellColor, (Position[0], Position[1], CellSize, CellSize))
 	if Sudoku.Grid[CellPosition[1]][CellPosition[0]] != 0:
-		Color = (180 * int(Sudoku.CheckGrid[CellPosition[1]][CellPosition[0]] != 0), 0, 0)
+		Available = Sudoku.check_cell_availability(CellPosition)
+		Color = (180 * int(Sudoku.Grid[Sudoku.PlacePosition[1]][Sudoku.PlacePosition[0]] not in Available), 0, 0)
+		draw_text(str(Sudoku.Grid[CellPosition[1]][CellPosition[0]]), [Position[0] + int(CellSize / 2), Position[1] + int(CellSize / 2)], Font = Sudoku.Font, Color = Color)
+
+def draw_cell(Position, CellSize, CellPosition, Sudoku):
+	SquarePosition = [int(Sudoku.Position[0] / 3) * 3, int(Sudoku.Position[1] / 3) * 3]
+	CellColor = [240, 240, 240]
+
+	if Sudoku.LockedGrid[CellPosition[1]][CellPosition[0]]:
+		CellColor = [CellColor[0] - 45, CellColor[1] - 45, CellColor[2] - 45]
+
+	if CellPosition[0] in [Cell for Cell in range(SquarePosition[0], SquarePosition[0] + 3)] and CellPosition[1] in [Cell for Cell in range(SquarePosition[1], SquarePosition[1] + 3)]:
+		CellColor = [CellColor[0] - 45, CellColor[1] - 45, CellColor[2]]
+	elif Sudoku.Position[0] == CellPosition[0] or Sudoku.Position[1] == CellPosition[1]:
+		CellColor = [CellColor[0] - 45, CellColor[1] - 45, CellColor[2]]
+
+	if CellPosition == Sudoku.Position or Sudoku.Grid[CellPosition[1]][CellPosition[0]] == Sudoku.Grid[Sudoku.Position[1]][Sudoku.Position[0]] and Sudoku.Grid[CellPosition[1]][CellPosition[0]] != 0:
+		CellColor = [150, 150, 240]
+
+	pygame.draw.rect(Display.Display, CellColor, (Position[0], Position[1], CellSize, CellSize))
+	if Sudoku.Grid[CellPosition[1]][CellPosition[0]] != 0:
+		Available = Sudoku.check_cell_availability(CellPosition)
+		Color = (180 * int(Sudoku.Grid[CellPosition[1]][CellPosition[0]] not in Available), 0, 0)
 		draw_text(str(Sudoku.Grid[CellPosition[1]][CellPosition[0]]), [Position[0] + int(CellSize / 2), Position[1] + int(CellSize / 2)], Font = Sudoku.Font, Color = Color)
 
 def draw_sudoku(Sudoku):
 	for Column in range(9):
-		YPosition = Column * Sudoku.CellSize + int(Column / 3) * Sudoku.WallSize + Sudoku.CellOffset[1]
+		YPosition = Column * Sudoku.CellSize + int(Column / 3) * Sudoku.SquareWallSize + Column * Sudoku.CellWallSize + Sudoku.CellOffset[1]
 		if YPosition < -Sudoku.CellSize or YPosition > Display.DisplayHeight + Sudoku.CellSize:
 			continue
 		for Row in range(9):
-			XPosition = Row * Sudoku.CellSize + int(Row / 3) * Sudoku.WallSize + Sudoku.CellOffset[0]
+			XPosition = Row * Sudoku.CellSize + int(Row / 3) * Sudoku.SquareWallSize + Row * Sudoku.CellWallSize + Sudoku.CellOffset[0]
 			if XPosition < -Sudoku.CellSize or XPosition > Display.DisplayWidth + Sudoku.CellSize:
 				continue
 			draw_cell([XPosition, YPosition], Sudoku.CellSize, [Row, Column], Sudoku)

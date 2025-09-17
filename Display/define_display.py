@@ -18,7 +18,7 @@ class Define_Display:
 			self.Display = pygame.display.set_mode((self.DisplayWidth, self.DisplayHeight))
 		else:
 			self.Display = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
-		self.Font = pygame.font.SysFont("impact", int(min(self.DisplayWidth, self.DisplayHeight) / 16))
+		self.Font = pygame.font.SysFont("lexend", int(min(self.DisplayWidth, self.DisplayHeight) / 16))
 	
 	def update_display_resolution(self, Width, Height):
 		self.DisplayWidth = Width
