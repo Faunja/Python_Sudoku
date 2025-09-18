@@ -26,10 +26,18 @@ def draw_cell(Position, CellSize, CellPosition, Sudoku):
 		CellColor = [150, 150, 240]
 
 	pygame.draw.rect(Display.Display, CellColor, (Position[0], Position[1], CellSize, CellSize))
+	Available = Sudoku.GridAvailability[CellPosition[1]][CellPosition[0]]
 	if Sudoku.Grid[CellPosition[1]][CellPosition[0]] != 0:
-		Available = Sudoku.check_cell_availability(CellPosition)
 		Color = (180 * int(Sudoku.Grid[CellPosition[1]][CellPosition[0]] not in Available), 0, 0)
 		draw_text(str(Sudoku.Grid[CellPosition[1]][CellPosition[0]]), [Position[0] + int(CellSize / 2), Position[1] + int(CellSize / 2)], Font = Sudoku.Font, Color = Color)
+	else:
+		if not Sudoku.ShowGridAvailability:
+			Available = Sudoku.PotentialGrid[CellPosition[1]][CellPosition[0]]
+		for Number in Available:
+			Color = (45, 45, 45)
+			NumberPosition = [((Number - 1) % 3 - 1) * (CellSize / 3), (int((Number - 1) / 3) - 1) * (CellSize / 3)]
+			TextPosition = [Position[0] + int(CellSize / 2) + NumberPosition[0], Position[1] + int(CellSize / 2) + NumberPosition[1]]
+			draw_text(str(Number), [TextPosition[0], TextPosition[1]], Font = Sudoku.AvailableFont, Color = Color)
 
 def draw_sudoku(Sudoku):
 	for Column in range(9):

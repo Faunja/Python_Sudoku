@@ -5,49 +5,6 @@ from User.define_controls import Controls
 from User.define_user import User
 from Display.define_display import Display
 
-def update_key_down(Key):
-	if Key in Controls.QuitGame:
-		User.Playing = False
-	
-	if Key in Controls.RewindGrid:
-		Controls.PressedKeys[Key] = [0, 5, 60]
-	if Key in Controls.ForwardGrid:
-		Controls.PressedKeys[Key] = [0, 5, 60]
-	
-	if Key in Controls.MoveDown:
-		Controls.PressedKeys[Key] = [0, 5]
-	if Key in Controls.MoveUp:
-		Controls.PressedKeys[Key] = [0, 5]
-	if Key in Controls.MoveLeft:
-		Controls.PressedKeys[Key] = [0, 5]
-	if Key in Controls.MoveRight:
-		Controls.PressedKeys[Key] = [0, 5]
-	if Key in Controls.Numbers:
-		Sudoku.update_cells(Controls.Numbers.index(Key))
-	if Key in Controls.RestartGame:
-		Sudoku.restart_grid()
-		Sudoku.create_grid()
-	if Key in Controls.SolveSudoku:
-		Sudoku.solve_grid()
-	
-	if Key in Controls.Fullscreen:
-		Display.toggle_fullscreen()
-		Sudoku.update_cell_display()
-
-def update_key_up(Key):
-	if Key in Controls.RewindGrid:
-		Controls.PressedKeys.pop(Key)
-	if Key in Controls.ForwardGrid:
-		Controls.PressedKeys.pop(Key)
-	if Key in Controls.MoveDown:
-		Controls.PressedKeys.pop(Key)
-	if Key in Controls.MoveUp:
-		Controls.PressedKeys.pop(Key)
-	if Key in Controls.MoveLeft:
-		Controls.PressedKeys.pop(Key)
-	if Key in Controls.MoveRight:
-		Controls.PressedKeys.pop(Key)
-
 def check_key(Keybind):
 	for Key in Keybind:
 		if Key in Controls.PressedKeys:
@@ -84,6 +41,58 @@ def update_pressed_keys():
 	if check_pressed_key(Controls.MoveRight):
 		Sudoku.update_position([1, 0])
 
+def update_key_down(Key):
+	if Key in Controls.QuitGame:
+		User.Playing = False
+	
+	if Key in Controls.RewindGrid:
+		Controls.PressedKeys[Key] = [0, 5, 60]
+	if Key in Controls.ForwardGrid:
+		Controls.PressedKeys[Key] = [0, 5, 60]
+	
+	if Key in Controls.MoveDown:
+		Controls.PressedKeys[Key] = [0, 5]
+	if Key in Controls.MoveUp:
+		Controls.PressedKeys[Key] = [0, 5]
+	if Key in Controls.MoveLeft:
+		Controls.PressedKeys[Key] = [0, 5]
+	if Key in Controls.MoveRight:
+		Controls.PressedKeys[Key] = [0, 5]
+	if Key in Controls.Numbers:
+		if Controls.Numbers.index(Key) <= 8 and not Sudoku.PlacePotentialNumbers:
+			Sudoku.update_cells(Controls.Numbers.index(Key) + 1)
+		elif Controls.Numbers.index(Key) <= 8 and Sudoku.PlacePotentialNumbers:
+			Sudoku.update_cells_potential(Controls.Numbers.index(Key) + 1)
+		else:
+			Sudoku.update_cells(0)
+			Sudoku.update_cells_potential(0)
+	if Key in Controls.ShowGridAvailability:
+		Sudoku.ShowGridAvailability = not Sudoku.ShowGridAvailability
+	if Key in Controls.PlacePotentialNumbers:
+		Sudoku.PlacePotentialNumbers = True
+	if Key in Controls.RestartGame:
+		Sudoku.restart_grid()
+		Sudoku.create_grid()
+	
+	if Key in Controls.Fullscreen:
+		Display.toggle_fullscreen()
+		Sudoku.update_cell_display()
+
+def update_key_up(Key):
+	if Key in Controls.RewindGrid:
+		Controls.PressedKeys.pop(Key)
+	if Key in Controls.ForwardGrid:
+		Controls.PressedKeys.pop(Key)
+	if Key in Controls.MoveDown:
+		Controls.PressedKeys.pop(Key)
+	if Key in Controls.MoveUp:
+		Controls.PressedKeys.pop(Key)
+	if Key in Controls.MoveLeft:
+		Controls.PressedKeys.pop(Key)
+	if Key in Controls.MoveRight:
+		Controls.PressedKeys.pop(Key)
+	if Key in Controls.PlacePotentialNumbers:
+		Sudoku.PlacePotentialNumbers = False
 
 def event_handler():
 	for event in pygame.event.get():
