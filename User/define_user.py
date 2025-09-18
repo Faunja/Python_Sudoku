@@ -5,7 +5,6 @@ class Define_User:
 		self.FPS = 60 
 		self.AffectiveFPS = self.FPS
 		self.Clock = pygame.time.Clock()
-		
 		self.Playing = True
 
 User = Define_User()
