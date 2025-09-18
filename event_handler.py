@@ -59,13 +59,13 @@ def update_key_down(Key):
 	if Key in Controls.MoveRight:
 		Controls.PressedKeys[Key] = [0, 5]
 	if Key in Controls.Numbers:
-		if Controls.Numbers.index(Key) <= 8 and not Sudoku.PlacePotentialNumbers:
-			Sudoku.update_cells(Controls.Numbers.index(Key) + 1)
-		elif Controls.Numbers.index(Key) <= 8 and Sudoku.PlacePotentialNumbers:
-			Sudoku.update_cells_potential(Controls.Numbers.index(Key) + 1)
+		if not Sudoku.PlacePotentialNumbers:
+			Sudoku.update_cells(int(Controls.Numbers.index(Key) / 2) + 1)
 		else:
-			Sudoku.update_cells(0)
-			Sudoku.update_cells_potential(0)
+			Sudoku.update_cells_potential(int(Controls.Numbers.index(Key) / 2) + 1)
+	if Key in Controls.RemoveNumbers:
+		Sudoku.update_cells(0)
+		Sudoku.update_cells_potential(0)
 	if Key in Controls.ShowGridAvailability:
 		Sudoku.ShowGridAvailability = not Sudoku.ShowGridAvailability
 	if Key in Controls.PlacePotentialNumbers:

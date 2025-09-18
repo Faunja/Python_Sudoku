@@ -35,7 +35,7 @@ def draw_cell(Position, CellSize, CellPosition, Sudoku):
 			Available = Sudoku.PotentialGrid[CellPosition[1]][CellPosition[0]]
 		for Number in Available:
 			Color = (45, 45, 45)
-			NumberPosition = [((Number - 1) % 3 - 1) * (CellSize / 3), (int((Number - 1) / 3) - 1) * (CellSize / 3)]
+			NumberPosition = [((Number - 1) % 3 - 1) * (CellSize / 3), -(int((Number - 1) / 3) - 1) * (CellSize / 3)]
 			TextPosition = [Position[0] + int(CellSize / 2) + NumberPosition[0], Position[1] + int(CellSize / 2) + NumberPosition[1]]
 			draw_text(str(Number), [TextPosition[0], TextPosition[1]], Font = Sudoku.AvailableFont, Color = Color)
 
