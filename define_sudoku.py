@@ -42,16 +42,15 @@ class define_sudoku:
 	def check_cell_availability(self, Position):
 		X, Y = Position
 		CellAvailability = [Cell for Cell in range(1, 10)]
-		if int(Y / 3) * 3 != Y:
-			SquarePosition = [int(X / 3) * 3, int(Y / 3) * 3]
-			for Column in range(SquarePosition[1], SquarePosition[1] + 3):
-				if Column == Y:
+		SquarePosition = [int(X / 3) * 3, int(Y / 3) * 3]
+		for Column in range(SquarePosition[1], SquarePosition[1] + 3):
+			if Column == Y:
+				continue
+			for Row in range(SquarePosition[0], SquarePosition[0] + 3):
+				if Row == X:
 					continue
-				for Row in range(SquarePosition[0], SquarePosition[0] + 3):
-					if Row == X:
-						continue
-					if self.Grid[Column][Row] in CellAvailability:
-						CellAvailability.remove(self.Grid[Column][Row])
+				if self.Grid[Column][Row] in CellAvailability:
+					CellAvailability.remove(self.Grid[Column][Row])
 		for Column in range(9):
 			if self.Grid[Column][X] in CellAvailability and Y != Column:
 				CellAvailability.remove(self.Grid[Column][X])
@@ -63,15 +62,14 @@ class define_sudoku:
 	def update_cell_availability(self, Position):
 		X, Y = Position
 		CellAvailability = [Cell for Cell in range(1, 10)]
-		if int(Y / 3) * 3 != Y:
-			SquarePosition = [int(X / 3) * 3, int(Y / 3) * 3]
-			for Column in range(SquarePosition[1], SquarePosition[1] + 3):
-				if Column == Y:
+		SquarePosition = [int(X / 3) * 3, int(Y / 3) * 3]
+		for Column in range(SquarePosition[1], SquarePosition[1] + 3):
+			if Column == Y:
+				continue
+			for Row in range(SquarePosition[0], SquarePosition[0] + 3):
+				if Row == X:
 					continue
-				for Row in range(SquarePosition[0], SquarePosition[0] + 3):
-					if Row == X:
-						continue
-					self.GridAvailability[Column][Row] = self.check_cell_availability([Row, Column])
+				self.GridAvailability[Column][Row] = self.check_cell_availability([Row, Column])
 		for Column in range(9):
 			if Y != Column:
 				self.GridAvailability[Column][X] = self.check_cell_availability([X, Column])
@@ -135,6 +133,7 @@ class define_sudoku:
 		self.LockedGrid = [[1 for X in range(9)] for Y in range(9)]
 
 	def solve_grid(self):
+		AvailableChoice = [[0 for X in range(9)] for Y in range(9)]
 		for Column in range(9):
 			for Row in range(9):
 				if self.LockedGrid[Column][Row]:
@@ -142,7 +141,7 @@ class define_sudoku:
 				Available = self.check_cell_availability([Row, Column])
 				if not len(Available):
 					continue
-				self.Grid[Column][Row] = random.choice(Available)
+				self.Grid[Column][Row] = Available[AvailableChoice[Column][Row]]
 				self.SavePosition += 1
 				self.SavedGrids.append(copy.deepcopy(self.Grid))
 
